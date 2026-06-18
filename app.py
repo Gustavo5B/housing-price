@@ -1,0 +1,129 @@
+from flask import Flask, request, render_template_string
+import joblib
+import numpy as np
+
+app = Flask(__name__)
+
+model = joblib.load('model.pkl')
+scaler = joblib.load('scaler.pkl')
+
+HTML = """
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Predicción de Precio de Casa</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; background: #f0f2f5; min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 20px; }
+        .container { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); max-width: 500px; width: 100%; }
+        h1 { text-align: center; color: #2c3e50; margin-bottom: 25px; font-size: 22px; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; color: #555; font-size: 14px; font-weight: bold; }
+        input, select { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; }
+        input:focus, select:focus { border-color: #3498db; outline: none; }
+        button { width: 100%; padding: 12px; background: #3498db; color: white; border: none; border-radius: 6px; font-size: 16px; cursor: pointer; margin-top: 10px; }
+        button:hover { background: #2980b9; }
+        .result { text-align: center; margin-top: 20px; padding: 20px; background: #d4edda; border-radius: 8px; }
+        .result h2 { color: #155724; font-size: 28px; }
+        .row { display: flex; gap: 15px; }
+        .row .form-group { flex: 1; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Predicción de Precio de Casa</h1>
+        <form method="POST">
+            <div class="row">
+                <div class="form-group">
+                    <label>Square Feet</label>
+                    <input type="number" name="square_feet" step="any" required>
+                </div>
+                <div class="form-group">
+                    <label>Num Bedrooms</label>
+                    <input type="number" name="num_bedrooms" required>
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group">
+                    <label>Num Bathrooms</label>
+                    <input type="number" name="num_bathrooms" required>
+                </div>
+                <div class="form-group">
+                    <label>Num Floors</label>
+                    <input type="number" name="num_floors" required>
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group">
+                    <label>Year Built</label>
+                    <input type="number" name="year_built" required>
+                </div>
+                <div class="form-group">
+                    <label>Garage Size</label>
+                    <input type="number" name="garage_size" step="any" required>
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group">
+                    <label>Location Score</label>
+                    <input type="number" name="location_score" step="any" required>
+                </div>
+                <div class="form-group">
+                    <label>Distance to Center</label>
+                    <input type="number" name="distance_to_center" step="any" required>
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group">
+                    <label>Has Garden</label>
+                    <select name="has_garden">
+                        <option value="0">No</option>
+                        <option value="1">Sí</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Has Pool</label>
+                    <select name="has_pool">
+                        <option value="0">No</option>
+                        <option value="1">Sí</option>
+                    </select>
+                </div>
+            </div>
+            <button type="submit">Predecir Precio</button>
+        </form>
+        {% if prediction %}
+        <div class="result">
+            <p>Precio estimado:</p>
+            <h2>${{ prediction }}</h2>
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>
+"""
+
+@app.route('/', methods=['GET', 'POST'])
+def index():
+    prediction = None
+    if request.method == 'POST':
+        features = np.array([[
+            float(request.form['square_feet']),
+            int(request.form['num_bedrooms']),
+            int(request.form['num_bathrooms']),
+            int(request.form['num_floors']),
+            int(request.form['year_built']),
+            int(request.form['has_garden']),
+            int(request.form['has_pool']),
+            float(request.form['garage_size']),
+            float(request.form['location_score']),
+            float(request.form['distance_to_center'])
+        ]])
+        features_scaled = scaler.transform(features)
+        result = model.predict(features_scaled)[0]
+        prediction = f"{result:,.2f}"
+    return render_template_string(HTML, prediction=prediction)
+
+if __name__ == '__main__':
+    app.run(debug=True)
