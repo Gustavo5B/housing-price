@@ -25,6 +25,8 @@ HTML = """
         input:focus, select:focus { border-color: #3498db; outline: none; }
         button { width: 100%; padding: 12px; background: #3498db; color: white; border: none; border-radius: 6px; font-size: 16px; cursor: pointer; margin-top: 10px; }
         button:hover { background: #2980b9; }
+        .btn-clear { background: #e74c3c; margin-top: 8px; }
+        .btn-clear:hover { background: #c0392b; }
         .result { text-align: center; margin-top: 20px; padding: 20px; background: #d4edda; border-radius: 8px; }
         .result h2 { color: #155724; font-size: 28px; }
         .row { display: flex; gap: 15px; }
@@ -92,6 +94,7 @@ HTML = """
                 </div>
             </div>
             <button type="submit">Predecir Precio</button>
+            <button type="reset" class="btn-clear">Limpiar</button>
         </form>
         {% if prediction %}
         <div class="result">
