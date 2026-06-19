@@ -25,8 +25,6 @@ HTML = """
         input:focus, select:focus { border-color: #3498db; outline: none; }
         button { width: 100%; padding: 12px; background: #3498db; color: white; border: none; border-radius: 6px; font-size: 16px; cursor: pointer; margin-top: 10px; }
         button:hover { background: #2980b9; }
-        .btn-clear { background: #e74c3c; margin-top: 8px; }
-        .btn-clear:hover { background: #c0392b; }
         .result { text-align: center; margin-top: 20px; padding: 20px; background: #d4edda; border-radius: 8px; }
         .result h2 { color: #155724; font-size: 28px; }
         .row { display: flex; gap: 15px; }
@@ -40,61 +38,60 @@ HTML = """
             <div class="row">
                 <div class="form-group">
                     <label>Pies Cuadrados</label>
-                    <input type="number" name="square_feet" step="any" value="{{ vals.square_feet }}" required>
+                    <input type="number" name="square_feet" step="any" required>
                 </div>
                 <div class="form-group">
                     <label>Núm. Habitaciones</label>
-                    <input type="number" name="num_bedrooms" value="{{ vals.num_bedrooms }}" required>
+                    <input type="number" name="num_bedrooms" required>
                 </div>
             </div>
             <div class="row">
                 <div class="form-group">
                     <label>Núm. Baños</label>
-                    <input type="number" name="num_bathrooms" value="{{ vals.num_bathrooms }}" required>
+                    <input type="number" name="num_bathrooms" required>
                 </div>
                 <div class="form-group">
                     <label>Núm. Pisos</label>
-                    <input type="number" name="num_floors" value="{{ vals.num_floors }}" required>
+                    <input type="number" name="num_floors" required>
                 </div>
             </div>
             <div class="row">
                 <div class="form-group">
                     <label>Año de Construcción</label>
-                    <input type="number" name="year_built" value="{{ vals.year_built }}" required>
+                    <input type="number" name="year_built" required>
                 </div>
                 <div class="form-group">
                     <label>Tamaño de Garaje</label>
-                    <input type="number" name="garage_size" step="any" value="{{ vals.garage_size }}" required>
+                    <input type="number" name="garage_size" step="any" required>
                 </div>
             </div>
             <div class="row">
                 <div class="form-group">
                     <label>Puntuación Ubicación</label>
-                    <input type="number" name="location_score" step="any" value="{{ vals.location_score }}" required>
+                    <input type="number" name="location_score" step="any" required>
                 </div>
                 <div class="form-group">
                     <label>Distancia al Centro</label>
-                    <input type="number" name="distance_to_center" step="any" value="{{ vals.distance_to_center }}" required>
+                    <input type="number" name="distance_to_center" step="any" required>
                 </div>
             </div>
             <div class="row">
                 <div class="form-group">
                     <label>Tiene Jardín</label>
                     <select name="has_garden">
-                        <option value="0" {{ 'selected' if vals.has_garden == '0' }}>No</option>
-                        <option value="1" {{ 'selected' if vals.has_garden == '1' }}>Sí</option>
+                        <option value="0">No</option>
+                        <option value="1">Sí</option>
                     </select>
                 </div>
                 <div class="form-group">
                     <label>Tiene Alberca</label>
                     <select name="has_pool">
-                        <option value="0" {{ 'selected' if vals.has_pool == '0' }}>No</option>
-                        <option value="1" {{ 'selected' if vals.has_pool == '1' }}>Sí</option>
+                        <option value="0">No</option>
+                        <option value="1">Sí</option>
                     </select>
                 </div>
             </div>
             <button type="submit">Predecir Precio</button>
-            <button type="reset" class="btn-clear">Limpiar</button>
         </form>
         {% if prediction %}
         <div class="result">
@@ -110,29 +107,23 @@ HTML = """
 @app.route('/', methods=['GET', 'POST'])
 def index():
     prediction = None
-    vals = {
-        'square_feet': '', 'num_bedrooms': '', 'num_bathrooms': '', 'num_floors': '',
-        'year_built': '', 'garage_size': '', 'location_score': '', 'distance_to_center': '',
-        'has_garden': '0', 'has_pool': '0'
-    }
     if request.method == 'POST':
-        vals = request.form.to_dict()
         features = np.array([[
-            float(vals['square_feet']),
-            int(vals['num_bedrooms']),
-            int(vals['num_bathrooms']),
-            int(vals['num_floors']),
-            int(vals['year_built']),
-            int(vals['has_garden']),
-            int(vals['has_pool']),
-            float(vals['garage_size']),
-            float(vals['location_score']),
-            float(vals['distance_to_center'])
+            float(request.form['square_feet']),
+            int(request.form['num_bedrooms']),
+            int(request.form['num_bathrooms']),
+            int(request.form['num_floors']),
+            int(request.form['year_built']),
+            int(request.form['has_garden']),
+            int(request.form['has_pool']),
+            float(request.form['garage_size']),
+            float(request.form['location_score']),
+            float(request.form['distance_to_center'])
         ]])
         features_scaled = scaler.transform(features)
         result = model.predict(features_scaled)[0]
         prediction = f"{result:,.2f}"
-    return render_template_string(HTML, prediction=prediction, vals=vals)
+    return render_template_string(HTML, prediction=prediction)
 
 if __name__ == '__main__':
     app.run(debug=True)
