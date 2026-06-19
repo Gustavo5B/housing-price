@@ -37,54 +37,54 @@ HTML = """
         <form method="POST">
             <div class="row">
                 <div class="form-group">
-                    <label>Square Feet</label>
+                    <label>Pies Cuadrados</label>
                     <input type="number" name="square_feet" step="any" required>
                 </div>
                 <div class="form-group">
-                    <label>Num Bedrooms</label>
+                    <label>Núm. Habitaciones</label>
                     <input type="number" name="num_bedrooms" required>
                 </div>
             </div>
             <div class="row">
                 <div class="form-group">
-                    <label>Num Bathrooms</label>
+                    <label>Núm. Baños</label>
                     <input type="number" name="num_bathrooms" required>
                 </div>
                 <div class="form-group">
-                    <label>Num Floors</label>
+                    <label>Núm. Pisos</label>
                     <input type="number" name="num_floors" required>
                 </div>
             </div>
             <div class="row">
                 <div class="form-group">
-                    <label>Year Built</label>
+                    <label>Año de Construcción</label>
                     <input type="number" name="year_built" required>
                 </div>
                 <div class="form-group">
-                    <label>Garage Size</label>
+                    <label>Tamaño de Garaje</label>
                     <input type="number" name="garage_size" step="any" required>
                 </div>
             </div>
             <div class="row">
                 <div class="form-group">
-                    <label>Location Score</label>
+                    <label>Puntuación Ubicación</label>
                     <input type="number" name="location_score" step="any" required>
                 </div>
                 <div class="form-group">
-                    <label>Distance to Center</label>
+                    <label>Distancia al Centro</label>
                     <input type="number" name="distance_to_center" step="any" required>
                 </div>
             </div>
             <div class="row">
                 <div class="form-group">
-                    <label>Has Garden</label>
+                    <label>Tiene Jardín</label>
                     <select name="has_garden">
                         <option value="0">No</option>
                         <option value="1">Sí</option>
                     </select>
                 </div>
                 <div class="form-group">
-                    <label>Has Pool</label>
+                    <label>Tiene Alberca</label>
                     <select name="has_pool">
                         <option value="0">No</option>
                         <option value="1">Sí</option>
